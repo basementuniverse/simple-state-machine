@@ -1,29 +1,38 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateTransition = void 0;
+const defaultStateMachineOptions = {
+    throwError: false,
+    allowSelfTransitions: true,
+};
 /**
  * Validate a state transition
  *
  * @param {StateMachine} stateMachine The state machine to check
  * @param {string} fromState The current state
  * @param {string} toState The state we want to transition to
- * @param {boolean} [throwError=false] Throw an error if the state or transition is invalid
+ * @param {Partial<StateMachineOptions>} [options={}] Options for configuring the state
+ * machine validator
  */
-function validateTransition(stateMachine, fromState, toState, throwError = false) {
+function validateTransition(stateMachine, fromState, toState, options = {}) {
+    const actualOptions = Object.assign({}, defaultStateMachineOptions, options);
     if (!(fromState in stateMachine)) {
-        if (throwError) {
+        if (actualOptions.throwError) {
             throw new Error(`Invalid 'from' state: '${fromState}' does not exist.`);
         }
         return false;
     }
     if (!(toState in stateMachine)) {
-        if (throwError) {
+        if (actualOptions.throwError) {
             throw new Error(`Invalid 'to' state: '${toState}' does not exist.`);
         }
         return false;
     }
     if (!stateMachine[fromState].includes(toState)) {
-        if (throwError) {
+        if (fromState === toState && actualOptions.allowSelfTransitions) {
+            return true;
+        }
+        if (actualOptions.throwError) {
             throw new Error(`Invalid state transition: unable to transition from '${fromState}' to '${toState}'.`);
         }
         return false;
@@ -31,4 +40,4 @@ function validateTransition(stateMachine, fromState, toState, throwError = false
     return true;
 }
 exports.validateTransition = validateTransition;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi9pbmRleC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7QUFPQTs7Ozs7OztHQU9HO0FBQ0gsU0FBZ0Isa0JBQWtCLENBQ2hDLFlBQTBCLEVBQzFCLFNBQWlCLEVBQ2pCLE9BQWUsRUFDZixhQUFzQixLQUFLO0lBRTNCLElBQUksQ0FBQyxDQUFDLFNBQVMsSUFBSSxZQUFZLENBQUMsRUFBRTtRQUNoQyxJQUFJLFVBQVUsRUFBRTtZQUNkLE1BQU0sSUFBSSxLQUFLLENBQUMsMEJBQTBCLFNBQVMsbUJBQW1CLENBQUMsQ0FBQztTQUN6RTtRQUVELE9BQU8sS0FBSyxDQUFDO0tBQ2Q7SUFFRCxJQUFJLENBQUMsQ0FBQyxPQUFPLElBQUksWUFBWSxDQUFDLEVBQUU7UUFDOUIsSUFBSSxVQUFVLEVBQUU7WUFDZCxNQUFNLElBQUksS0FBSyxDQUFDLHdCQUF3QixPQUFPLG1CQUFtQixDQUFDLENBQUM7U0FDckU7UUFFRCxPQUFPLEtBQUssQ0FBQztLQUNkO0lBRUQsSUFBSSxDQUFDLFlBQVksQ0FBQyxTQUFTLENBQUMsQ0FBQyxRQUFRLENBQUMsT0FBTyxDQUFDLEVBQUU7UUFDOUMsSUFBSSxVQUFVLEVBQUU7WUFDZCxNQUFNLElBQUksS0FBSyxDQUNiLHdEQUF3RCxTQUFTLFNBQVMsT0FBTyxJQUFJLENBQ3RGLENBQUM7U0FDSDtRQUVELE9BQU8sS0FBSyxDQUFDO0tBQ2Q7SUFFRCxPQUFPLElBQUksQ0FBQztBQUNkLENBQUM7QUFqQ0QsZ0RBaUNDIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi9pbmRleC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7QUFlQSxNQUFNLDBCQUEwQixHQUF3QjtJQUN0RCxVQUFVLEVBQUUsS0FBSztJQUNqQixvQkFBb0IsRUFBRSxJQUFJO0NBQzNCLENBQUE7QUFFRDs7Ozs7Ozs7R0FRRztBQUNILFNBQWdCLGtCQUFrQixDQUNoQyxZQUEwQixFQUMxQixTQUFpQixFQUNqQixPQUFlLEVBQ2YsVUFBd0MsRUFBRTtJQUUxQyxNQUFNLGFBQWEsR0FBRyxNQUFNLENBQUMsTUFBTSxDQUFDLEVBQUUsRUFBRSwwQkFBMEIsRUFBRSxPQUFPLENBQUMsQ0FBQztJQUU3RSxJQUFJLENBQUMsQ0FBQyxTQUFTLElBQUksWUFBWSxDQUFDLEVBQUU7UUFDaEMsSUFBSSxhQUFhLENBQUMsVUFBVSxFQUFFO1lBQzVCLE1BQU0sSUFBSSxLQUFLLENBQUMsMEJBQTBCLFNBQVMsbUJBQW1CLENBQUMsQ0FBQztTQUN6RTtRQUVELE9BQU8sS0FBSyxDQUFDO0tBQ2Q7SUFFRCxJQUFJLENBQUMsQ0FBQyxPQUFPLElBQUksWUFBWSxDQUFDLEVBQUU7UUFDOUIsSUFBSSxhQUFhLENBQUMsVUFBVSxFQUFFO1lBQzVCLE1BQU0sSUFBSSxLQUFLLENBQUMsd0JBQXdCLE9BQU8sbUJBQW1CLENBQUMsQ0FBQztTQUNyRTtRQUVELE9BQU8sS0FBSyxDQUFDO0tBQ2Q7SUFFRCxJQUFJLENBQUMsWUFBWSxDQUFDLFNBQVMsQ0FBQyxDQUFDLFFBQVEsQ0FBQyxPQUFPLENBQUMsRUFBRTtRQUM5QyxJQUFJLFNBQVMsS0FBSyxPQUFPLElBQUksYUFBYSxDQUFDLG9CQUFvQixFQUFFO1lBQy9ELE9BQU8sSUFBSSxDQUFDO1NBQ2I7UUFFRCxJQUFJLGFBQWEsQ0FBQyxVQUFVLEVBQUU7WUFDNUIsTUFBTSxJQUFJLEtBQUssQ0FDYix3REFBd0QsU0FBUyxTQUFTLE9BQU8sSUFBSSxDQUN0RixDQUFDO1NBQ0g7UUFFRCxPQUFPLEtBQUssQ0FBQztLQUNkO0lBRUQsT0FBTyxJQUFJLENBQUM7QUFDZCxDQUFDO0FBdkNELGdEQXVDQyJ9

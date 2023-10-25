@@ -62,8 +62,32 @@ result = validateTransition(
   myStateMachine,
   'open',
   'closedAndLocked',
-  true
+  {
+    throwErrors: true,
+  }
 );
 // this will throw an error with the message:
 // "Invalid state transition: unable to transition from 'open' to 'closedAndLocked'."
+
+// Test #4
+result = validateTransition(
+  myStateMachine,
+  'open',
+  'open',
+  {
+    allowSelfTransition: true,
+  }
+);
+
+// result will be true (this is a valid transition even though it's not explicitly defined)
+console.assert(result);
 ```
+
+## Options
+
+The `validateTransition` function accepts an optional `options` object as its fourth argument. The following options are available:
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `allowSelfTransition` | `boolean` | `true` | If `true`, a transition from a state to itself will be considered valid. |
+| `throwErrors` | `boolean` | `false` | If `true`, an error will be thrown if the transition is invalid. |

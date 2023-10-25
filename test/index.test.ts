@@ -77,7 +77,9 @@ describe('validateTransition', () => {
         testStateMachine,
         'open',
         'closedAndUnlocked',
-        true
+        {
+          throwError: true,
+        }
       )
     ).toBeTruthy();
 
@@ -86,7 +88,9 @@ describe('validateTransition', () => {
         testStateMachine,
         'closedAndUnlocked',
         'closedAndLocked',
-        true
+        {
+          throwError: true,
+        }
       )
     ).toBeTruthy();
   });
@@ -97,7 +101,9 @@ describe('validateTransition', () => {
         testStateMachine,
         'invalidState',
         'open',
-        true
+        {
+          throwError: true,
+        }
       )
     ).toThrowError(
       /Invalid 'from' state: 'invalidState' does not exist\./
@@ -110,7 +116,9 @@ describe('validateTransition', () => {
         testStateMachine,
         'open',
         'invalidState',
-        true
+        {
+          throwError: true,
+        }
       )
     ).toThrowError(
       /Invalid 'to' state: 'invalidState' does not exist\./
@@ -123,7 +131,9 @@ describe('validateTransition', () => {
         testStateMachine,
         'open',
         'closedAndLocked',
-        true
+        {
+          throwError: true,
+        }
       )
     ).toThrowError(
       /Invalid state transition: unable to transition from 'open' to 'closedAndLocked'\./
@@ -134,10 +144,44 @@ describe('validateTransition', () => {
         testStateMachine,
         'closedAndLocked',
         'open',
-        true
+        {
+          throwError: true,
+        }
       )
     ).toThrowError(
       /Invalid state transition: unable to transition from 'closedAndLocked' to 'open'\./
     );
+  });
+
+  it('should allow self-transitions when configured to do so', () => {
+    expect(
+      validateTransition(
+        testStateMachine,
+        'open',
+        'open'
+      )
+    ).toBeTruthy();
+
+    expect(
+      validateTransition(
+        testStateMachine,
+        'open',
+        'open',
+        {
+          allowSelfTransitions: true,
+        }
+      )
+    ).toBeTruthy();
+
+    expect(
+      validateTransition(
+        testStateMachine,
+        'open',
+        'open',
+        {
+          allowSelfTransitions: false,
+        }
+      )
+    ).toBeFalsy();
   });
 });
